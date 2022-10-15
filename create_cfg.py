@@ -40,5 +40,3 @@ def make_cfg():
 
     with open(r'config.yml', 'w') as file:
         yaml.dump(yaml_file, file)
-
-#main.organise(ical_src, sort_keywords)
