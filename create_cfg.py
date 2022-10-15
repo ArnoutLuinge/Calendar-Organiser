@@ -1,6 +1,6 @@
 import yaml
 
-keyword_list1 = ["Exam", "Lecture", "Project", "Practical", "Workshop"]
+keyword_list1 = ["Exam", "Lecture", "Practical", "Workshop"]
 keyword_list2 = ["Exam", "Lecture", "Tutorial", "Self study supervised", "Practical"]
 
 sort_keywords = []
