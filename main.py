@@ -1,13 +1,27 @@
+from ast import keyword
+from distutils.command.config import config
 from icalendar import Calendar, Event
 from datetime import datetime
 from pytz import UTC # timezone
+import yaml
 import requests
+import create_cfg
+import os.path
+from os import path
 
-def main():
-    return 0
+#check wether the config file exists, if not make one
+if not path.exists("config.yml"):
+    print("No config file found, lets create one")
+    create_cfg.make_cfg()
+
+# Read YAML file
+with open("config.yml", 'r') as stream:
+    config_data = yaml.safe_load(stream)
+
 
 def get_file(ical_link):
     ical_file = requests.get(ical_link)
+    print("Source calendar downloaded")
     cal = open("calendar.ics", 'wb').write(ical_file.content)
     cal = open("calendar.ics", 'rb')
     return cal
@@ -58,3 +72,5 @@ def isolate_staff(org_desc):
         org_desc = org_desc[start:]
         end = org_desc.find('\n')
         return org_desc[:end]
+
+organise(config_data['Calendar_URL'], config_data['keywords'])
