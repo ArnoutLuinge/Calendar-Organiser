@@ -8,5 +8,5 @@ print("1: Lecture, practical, misc")
 sort_choice = input()
 
 if sort_choice == 1:
-    sort_keywords = ["Lecture", "Practical"]
+    sort_keywords =  ["Exam", "Lecture", "Project", "Practical"]
     organizer.organise(ical_src, sort_keywords)
