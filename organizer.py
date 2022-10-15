@@ -47,6 +47,8 @@ def organise(ical_link, sorting_keywords):
     f.close()
     org_cal.close()
 
+    print("Ical file created")
+
     return 0
 
 def isolate_staff(org_desc):
