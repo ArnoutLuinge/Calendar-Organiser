@@ -14,6 +14,9 @@ if not path.exists("config.yml"):
     print("No config file found, lets create one")
     create_cfg.make_cfg()
 
+if not os.path.exists("new_calendars"):
+    os.makedirs("new_calendars")
+
 # Read YAML file
 with open("config.yml", 'r') as stream:
     config_data = yaml.safe_load(stream)
