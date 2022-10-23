@@ -66,7 +66,7 @@ def organise(ical_link, sorting_keywords):
             i=0
             while i < len(sorting_keywords):
                 if "Type: " + sorting_keywords[i] in component.get('description'):
-                    isMiscEvent == False
+                    isMiscEvent = False
                 i +=1
             if isMiscEvent:
                 Misc_cal.add_component(create_event(component, 10, ""))  
