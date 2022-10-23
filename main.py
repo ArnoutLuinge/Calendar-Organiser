@@ -41,7 +41,7 @@ def organise(ical_link, sorting_keywords):
         Temp_cal = Calendar()
         Temp_cal.add('prodid', '-//Arnouts great calendar//EN')
         Temp_cal.add('version', '2.0')
-        Temp_cal.add('X-WR-CALNAME', sorting_keywords[i])
+        #Temp_cal.add('X-WR-CALNAME', sorting_keywords[i])
 
         for component in cal.walk():
             if component.name == "VEVENT":
@@ -58,7 +58,7 @@ def organise(ical_link, sorting_keywords):
     Misc_cal = Calendar()
     Misc_cal.add('prodid', '-//Arnouts great calendar//EN')
     Misc_cal.add('version', '2.0')
-    Misc_cal.add('X-WR-CALNAME', 'Misc')
+    #Misc_cal.add('X-WR-CALNAME', 'Misc')
 
     for component in cal.walk():
         if component.name == "VEVENT":
