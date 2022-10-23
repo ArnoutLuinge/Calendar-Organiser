@@ -1,5 +1,3 @@
-from ast import keyword
-from distutils.command.config import config
 from icalendar import Calendar, Event
 from datetime import datetime
 from pytz import UTC # timezone
@@ -37,31 +35,18 @@ def organise(ical_link, sorting_keywords):
     org_cal = get_file(ical_link)
     cal = Calendar.from_ical(org_cal.read())
 
-    #create calendars for each keyword plus one for misc / remaining events
-    Misc_cal = Calendar()
-    Misc_cal.add('prodid', '-//Arnouts great calendar//EN')
-    Misc_cal.add('version', '2.0')
-
+    #create calendars for each keyword
     i = 0
     while i < len(sorting_keywords):
         Temp_cal = Calendar()
         Temp_cal.add('prodid', '-//Arnouts great calendar//EN')
         Temp_cal.add('version', '2.0')
+        Temp_cal.add('X-WR-CALNAME', sorting_keywords[i])
 
         for component in cal.walk():
             if component.name == "VEVENT":
                 if "Type: " + sorting_keywords[i] in component.get('description'):
-                    Temp_cal.add_component(create_event(component, i, sorting_keywords))
-                # else:
-                #     event = Event()
-                #     event.add('summary', component.get('summary'))
-                #     event.add('dtstart', component.get('dtstart'))
-                #     event.add('dtend', component.get('dtend'))
-                #     event.add('dtstamp', component.get('dtstamp'))
-                #     event.add('location', component.get('location'))
-                #     event.add('description', isolate_staff(component.get('description')))
-                #     event.add('priority', 10)
-                #     Misc_cal.add_component(event)
+                    Temp_cal.add_component(create_event(component, i, sorting_keywords[i]))
 
         new_cal = open('new_calendars/' + sorting_keywords[i] + '_cal.ics', 'wb') #create and open the new ical file
         new_cal.write(Temp_cal.to_ical()) #write the created calendar to the file
@@ -69,6 +54,22 @@ def organise(ical_link, sorting_keywords):
         print(sorting_keywords[i] + "_cal.ics created")
         i +=1
 
+    #also create one for misc / remaining events
+    Misc_cal = Calendar()
+    Misc_cal.add('prodid', '-//Arnouts great calendar//EN')
+    Misc_cal.add('version', '2.0')
+    Misc_cal.add('X-WR-CALNAME', 'Misc')
+
+    for component in cal.walk():
+        if component.name == "VEVENT":
+            isMiscEvent = True
+            i=0
+            while i < len(sorting_keywords):
+                if "Type: " + sorting_keywords[i] in component.get('description'):
+                    isMiscEvent == False
+                i +=1
+            if isMiscEvent:
+                Misc_cal.add_component(create_event(component, 10, ""))  
 
     new_cal = open('new_calendars/Misc_cal.ics', 'wb')
     new_cal.write(Misc_cal.to_ical())
@@ -88,9 +89,9 @@ def isolate_staff(org_desc):
         return org_desc[:end]
 
 #create the new event by copying most properties of original cal, and alter some other
-def create_event(component, i, sorting_keywords):
+def create_event(component, i, sorting_keyword):
     event = Event()
-    event.add('summary', sorting_keywords[i] + " " + component.get('summary'))
+    event.add('summary', sorting_keyword + " " + component.get('summary'))
     event.add('dtstart', component.get('dtstart'))
     event.add('dtend', component.get('dtend'))
     event.add('dtstamp', component.get('dtstamp'))
