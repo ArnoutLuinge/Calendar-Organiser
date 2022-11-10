@@ -7,21 +7,6 @@ import create_cfg
 import os.path
 from os import path
 
-#check wether the config file exists, if not make one
-if not path.exists("config.yml"):
-    print("No config file found, lets create one")
-    if create_cfg.make_cfg():
-        print("Succesfully created config file.")
-
-#check wether the dir for the new calendars exists
-if not os.path.exists("new_calendars"):
-    os.makedirs("new_calendars")
-    print("Created new_calendars folder.")
-
-#read the YAML config file
-with open("config.yml", 'r') as stream:
-    config_data = yaml.safe_load(stream)
-
 #get the file using requests
 def get_file(ical_link):
     ical_file = requests.get(ical_link)
@@ -69,7 +54,14 @@ def organise(ical_link, sorting_keywords):
                     isMiscEvent = False
                 i +=1
             if isMiscEvent:
-                Misc_cal.add_component(create_event(component, 10, ""))  
+                desc = component.get('description')
+                if 'Type: ' in desc:
+                    start = desc.find('Type: ') + 6
+                    end = desc[start:].find('\n') + start
+                    eventType = desc[start:end]
+                else:
+                    eventType = 'Misc'
+                Misc_cal.add_component(create_event(component, 10, eventType))  
 
     new_cal = open('new_calendars/Misc_cal.ics', 'wb')
     new_cal.write(Misc_cal.to_ical())
@@ -101,7 +93,27 @@ def create_event(component, i, sorting_keyword):
     return event
 
 #call the main function to run the organizing of calendar
-organise(config_data['Calendar_URL'], config_data['keywords'])
+def main():
+    #check wether the config file exists, if not make one
+    if not path.exists("config.yml"):
+        print("No config file found, lets create one")
+        if create_cfg.make_cfg():
+            print("Succesfully created config file.")
 
-#clean up the temponary downloaded src calendar
-os.remove("temp_calendar.ics")
+    #check wether the dir for the new calendars exists
+    if not os.path.exists("new_calendars"):
+        os.makedirs("new_calendars")
+        print("Created new_calendars folder.")
+
+    #read the YAML config file
+    with open("config.yml", 'r') as stream:
+        config_data = yaml.safe_load(stream)
+
+
+    organise(config_data['Calendar_URL'], config_data['keywords'])
+
+    #clean up the temponary downloaded src calendar
+    os.remove("temp_calendar.ics")
+
+if __name__ == '__main__':
+    main()
